@@ -21,6 +21,18 @@ Player2Y = VIRTUAL_HEIGHT - 25
 Player1Score = 0
 Player2Score = 0
 
+BallX = VIRTUAL_WIDTH / 2
+BallY = VIRTUAL_HEIGHT / 2
+
+ballDX = math.random(2) == 1 and 100 or -100
+-- Above command is equivalent to 
+-- BallX_Speed = math.random(2) == 1 ? 100:-100
+ballDY = math.random(-50, 50)
+
+gameState = 'start'
+
+timeDelta = 0
+
 function love.load()
 
 -- below code will diaplay window with normal look and feel
@@ -77,6 +89,9 @@ function love.update(dt)
         changeColour()
     end
     ]]
+
+    --print(" Time displaced : %d ",dt)
+
     if love.keyboard.isDown('w') then
         Player1Y = Player1Y + -PADDLE_SPEED * dt
     elseif love.keyboard.isDown('s') then
@@ -99,6 +114,11 @@ function love.update(dt)
         Player2Y = 0
     end
 
+    if gameState == 'play' then
+        BallX = BallX + ballDX * dt
+        BallY = BallY + ballDY * dt
+        print ("Ball Position %d",BallX," x %d",BallY)
+    end
 end
 
 function love.keypressed(key)
@@ -106,9 +126,22 @@ function love.keypressed(key)
         love.event.quit()
     -- Cannot follow key presses because we need to ,manually decide how many pixel to move and wont work
     -- based on frame Rate of the screen as 
-    
-    elseif key == 's' then
-        print("Value of Y is :%d", Player1Y)
+    elseif key == 'enter' or key == 'return' then
+        print("Enter key has been pressed")
+        if gameState == 'start' then
+            gameState = 'play'
+        else
+            gameState = 'start'
+
+            BallX = VIRTUAL_WIDTH / 2
+            BallY = VIRTUAL_HEIGHT / 2
+
+            ballDX = math.random(2) == 1 and 100 or -100
+            -- Above command is equivalent to 
+            -- BallX_Speed = math.random(2) == 1 ? 100:-100
+            ballDY = math.random(-50, 50)
+
+        end
     end
 end
 
@@ -131,7 +164,7 @@ function love.draw()
     love.graphics.setColor(211/255, 84/255, 0/255, 255/255)
     love.graphics.rectangle('fill',10, Player2Y,5,20)
     love.graphics.rectangle('fill', VIRTUAL_WIDTH - 15, Player1Y,5 ,20 )
-    love.graphics.rectangle('fill',VIRTUAL_WIDTH / 2 ,VIRTUAL_HEIGHT / 2 ,5 ,5)
+    love.graphics.rectangle('fill',BallX ,BallY ,5 ,5)
 
     push:apply('end')
     --love.graphics.setColor(color2,color2,color2) 
